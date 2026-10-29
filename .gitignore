@@ -5,3 +5,6 @@
 node_modules/
 test-results/
 playwright-report/
+
+# Estado local de Obsidian (grafo y workspace)
+docs/.obsidian/graph.json
