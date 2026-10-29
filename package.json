@@ -1,0 +1,11 @@
+{
+  "name": "claude-tetris",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "evidencia": "playwright test && echo 'Capturas en evidencia/'"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}
