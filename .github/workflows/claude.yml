@@ -12,12 +12,22 @@ on:
 
 jobs:
   claude:
+    # El modelo se define en Settings > Secrets and variables > Actions > Variables (CLAUDE_MODEL).
+    # Si la variable no existe, se usa el valor por defecto. El nombre del job y el resumen lo reflejan.
+    name: claude (${{ vars.CLAUDE_MODEL || 'claude-sonnet-5-5' }})
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Evita ejecuciones paralelas (y ramas duplicadas) sobre el mismo issue o PR.
+    concurrency:
+      group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
+      cancel-in-progress: false
+    env:
+      CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-sonnet-5-5' }}
     permissions:
       contents: write
       pull-requests: write
@@ -26,15 +36,22 @@ jobs:
       actions: read # Required for Claude to read CI results on PRs
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 1
 
+      - name: Registrar modelo usado
+        run: |
+          echo "Modelo configurado para esta ejecución: \`$CLAUDE_MODEL\`" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Run Claude Code
         id: claude
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Muestra el avance como lista de tareas con casillas mientras Claude trabaja
+          track_progress: true
 
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
@@ -43,8 +60,7 @@ jobs:
           # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
           # prompt: 'Update the pull request description to include a summary of changes.'
 
-          # Optional: Add claude_args to customize behavior and configuration
+          # El modelo viene de la variable CLAUDE_MODEL; si cambias la variable, cambia el modelo.
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr *)'
-
+          claude_args: '--model ${{ env.CLAUDE_MODEL }}'
