@@ -69,6 +69,9 @@ jobs:
           SHA=$(git rev-parse HEAD)
           CARPETA=$(ls -d tests/evidencia/issue-$ISSUE/*/ | sort | tail -1)
           MODELO=$(jq -r '.model // "sin modelo"' .claude/settings.json)
+          NAVEGADOR=$(node -e "require('playwright-core').chromium.launch().then(async b=>{console.log('Chromium '+b.version());await b.close()})")
+          PLAYWRIGHT=$(npx playwright --version | awk '{print $2}')
+          DISPOSITIVO=$(. /etc/os-release; echo "$PRETTY_NAME, viewport 1080×1920")
           IMAGENES=""
           for f in "$CARPETA"*.png "$CARPETA"fallo/*.png; do
             [ -f "$f" ] || continue
@@ -93,6 +96,8 @@ jobs:
             echo "- Rama: \`qa\` (commit \`${SHA:0:7}\`)"
             echo "- Ejecución: \`$(basename "$CARPETA")\`"
             echo "- Modelo configurado: \`$MODELO\`"
+            echo "- Navegador: \`$NAVEGADOR\` (Playwright $PLAYWRIGHT)"
+            echo "- Dispositivo: $DISPOSITIVO"
             echo "$IMAGENES"
             echo ""
             echo "Aprobación del merge a \`main\`: manual."
