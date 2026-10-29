@@ -1,0 +1,79 @@
+name: QA
+
+# Ejecuta las pruebas Playwright de un issue y publica la evidencia en su hilo.
+# Uso: Actions → QA → Run workflow → issue = número del issue.
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Número del issue a verificar
+        required: true
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout rama qa
+        uses: actions/checkout@v4
+        with:
+          ref: qa
+          fetch-depth: 1
+
+      - name: Instalar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias y navegador
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Ejecutar pruebas
+        id: pruebas
+        env:
+          ISSUE: ${{ inputs.issue }}
+        run: npm test
+        continue-on-error: true
+
+      - name: Guardar evidencia en qa
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/evidencia
+          git commit -m "Evidencia QA del issue #${{ inputs.issue }}" || echo "Sin evidencia nueva"
+          git push origin HEAD:qa
+
+      - name: Publicar resultado en el issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ inputs.issue }}
+          RESULTADO: ${{ steps.pruebas.outcome }}
+          REPO: ${{ github.repository }}
+        run: |
+          SHA=$(git rev-parse HEAD)
+          CARPETA=$(ls -d tests/evidencia/issue-$ISSUE/*/ | sort | tail -1)
+          MODELO=$(jq -r '.model // "sin modelo"' .claude/settings.json)
+          if [ "$RESULTADO" = "success" ]; then ESTADO="✅ Pruebas pasan en qa"; else ESTADO="❌ Pruebas fallan en qa"; fi
+          IMAGENES=""
+          for f in "$CARPETA"*.png; do
+            IMAGENES="$IMAGENES
+          ![$(basename "$f" .png)](https://raw.githubusercontent.com/$REPO/$SHA/$f)"
+          done
+          {
+            echo "### 🧪 Evidencia QA"
+            echo "$ESTADO"
+            echo ""
+            echo "- Rama: \`qa\` (commit \`${SHA:0:7}\`)"
+            echo "- Ejecución: \`$(basename "$CARPETA")\`"
+            echo "- Modelo configurado: \`$MODELO\`"
+            echo "$IMAGENES"
+            echo ""
+            echo "Aprobación del merge a \`main\`: manual."
+          } > cuerpo.md
+          gh api "repos/$REPO/issues/$ISSUE/comments" -F body=@cuerpo.md >/dev/null
