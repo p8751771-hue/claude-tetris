@@ -8,9 +8,9 @@
 
 ```mermaid
 flowchart LR
-  A[@claude implementa esto] --> B[Rama claude/issue-N]
-  B --> C[Commit y push]
-  C --> D[Enlace Create PR]
+  A["@claude implementa esto"] --> B["Rama claude/issue-N"]
+  B --> C["Commit y push"]
+  C --> D["Enlace Create PR"]
 ```
 
 **Siguiente paso:** [Fase 2 · Ejecución de pruebas](fase-2-ejecucion.md).
