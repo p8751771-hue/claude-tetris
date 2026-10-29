@@ -14,6 +14,7 @@ Documentación del flujo de pruebas de Tetris. Empieza por el ciclo, después re
 6. [Fase 6 · Fallo y revisión manual](fase-6-fallo.md)
 
 ## Referencia
+- [Plan de pruebas](plan-de-pruebas.md)
 - [Framework de pruebas](framework-pruebas.md)
 - [Claude como asistente de pruebas](pruebas-con-claude.md)
 - [Trazabilidad del modelo](trazabilidad-modelo.md)
