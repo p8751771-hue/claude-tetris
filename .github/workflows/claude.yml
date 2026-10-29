@@ -74,6 +74,9 @@ jobs:
         env:
           PEDIDO: ${{ steps.modelo.outputs.model }}
           ARCHIVO: ${{ steps.claude.outputs.execution_file }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMERO: ${{ github.event.issue.number || github.event.pull_request.number }}
         run: |
           REALES=$(jq -r '.. | objects | .model? // empty' "$ARCHIVO" 2>/dev/null | sort -u | paste -sd ', ' -)
           echo "Modelos detectados: ${REALES:-ninguno}"
@@ -85,3 +88,6 @@ jobs:
           if [ -n "$REALES" ] && ! echo "$REALES" | grep -q "$PEDIDO"; then
             echo "::warning::El modelo que respondió ($REALES) no coincide con el pedido ($PEDIDO)"
           fi
+
+          # Deja el modelo visible en el hilo del issue o PR, donde se lee la respuesta
+          gh api "repos/$REPO/issues/$NUMERO/comments" -f body="🔎 Modelo usado en esta ejecución: \`${REALES:-no detectado}\` (pedido: \`$PEDIDO\`)" >/dev/null
