@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Vanilla JavaScript Tetris on HTML5 Canvas. The game itself has no dependencies and no build step. The only dev dependency is `@playwright/test` (pinned in `package.json`), used for QA tests in `tests/` on the `qa` branch, with evidence screenshots in `evidencia/`. Run them with `npm test`. Per the `qa-tests` skill, requirement tests are written on `qa` and merged to `main` through a PR. No linter. The README and UI strings are in Spanish; keep user-facing text consistent with that.
+Vanilla JavaScript Tetris on HTML5 Canvas. The game itself has no dependencies and no build step. The only dev dependency is `@playwright/test` (pinned in `package.json`), used for QA tests in `tests/` on the `qa` branch, with evidence screenshots in `tests/evidencia/`. Run them with `npm test`. Per the `qa-tests` skill, requirement tests are written on `qa` and merged to `main` through a PR. No linter. The README and UI strings are in Spanish; keep user-facing text consistent with that.
 
 ## Running
 
