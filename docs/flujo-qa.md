@@ -2,7 +2,7 @@
 
 Cada requerimiento pasa por la rama `qa` antes de llegar a `main`. Las pruebas corren con Playwright, la evidencia queda en el repositorio y en el hilo del issue, y el merge a `main` lo aprueba una persona.
 
-![Flujo QA](../image/diagrama-flujo.png)
+![Flujo QA](image/diagrama-flujo.png)
 
 ## Resumen de pasos
 
