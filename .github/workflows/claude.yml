@@ -66,3 +66,21 @@ jobs:
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
           claude_args: '--model ${{ steps.modelo.outputs.model }}'
+
+      # Busca en el registro de la sesión los modelos que respondieron de verdad.
+      # Compara con el modelo pedido para detectar si no coinciden.
+      - name: Verificar modelo que respondió
+        if: always() && steps.claude.outputs.execution_file != ''
+        env:
+          PEDIDO: ${{ steps.modelo.outputs.model }}
+          ARCHIVO: ${{ steps.claude.outputs.execution_file }}
+        run: |
+          REALES=$(jq -r '.. | objects | .model? // empty' "$ARCHIVO" 2>/dev/null | sort -u | paste -sd ', ' -)
+          {
+            echo "### Modelo verificado"
+            echo "- Pedido: \`$PEDIDO\`"
+            echo "- Respondió: \`${REALES:-no detectado}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$REALES" ] && ! echo "$REALES" | grep -q "$PEDIDO"; then
+            echo "::warning::El modelo que respondió ($REALES) no coincide con el pedido ($PEDIDO)"
+          fi
