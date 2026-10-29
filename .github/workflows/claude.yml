@@ -76,6 +76,7 @@ jobs:
           ARCHIVO: ${{ steps.claude.outputs.execution_file }}
         run: |
           REALES=$(jq -r '.. | objects | .model? // empty' "$ARCHIVO" 2>/dev/null | sort -u | paste -sd ', ' -)
+          echo "Modelos detectados: ${REALES:-ninguno}"
           {
             echo "### Modelo verificado"
             echo "- Pedido: \`$PEDIDO\`"
