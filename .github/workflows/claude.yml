@@ -12,9 +12,6 @@ on:
 
 jobs:
   claude:
-    # El modelo se define en Settings > Secrets and variables > Actions > Variables (CLAUDE_MODEL).
-    # Si la variable no existe, se usa el valor por defecto. El nombre del job y el resumen lo reflejan.
-    name: claude (${{ vars.CLAUDE_MODEL || 'claude-sonnet-5-5' }})
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
@@ -26,8 +23,6 @@ jobs:
     concurrency:
       group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
       cancel-in-progress: false
-    env:
-      CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL || 'claude-sonnet-5-5' }}
     permissions:
       contents: write
       pull-requests: write
@@ -40,9 +35,17 @@ jobs:
         with:
           fetch-depth: 1
 
+      # El modelo se lee de .claude/settings.json en cada ejecución.
+      # Para cambiarlo: editar "model" en ese archivo, hacer commit y push a main.
+      - name: Leer modelo del proyecto
+        id: modelo
+        run: |
+          MODELO=$(jq -r '.model // empty' .claude/settings.json)
+          echo "model=${MODELO:-claude-sonnet-5-5}" >> "$GITHUB_OUTPUT"
+
       - name: Registrar modelo usado
         run: |
-          echo "Modelo configurado para esta ejecución: \`$CLAUDE_MODEL\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Modelo configurado para esta ejecución: \`${{ steps.modelo.outputs.model }}\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run Claude Code
         id: claude
@@ -60,7 +63,6 @@ jobs:
           # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
           # prompt: 'Update the pull request description to include a summary of changes.'
 
-          # El modelo viene de la variable CLAUDE_MODEL; si cambias la variable, cambia el modelo.
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
-          claude_args: '--model ${{ env.CLAUDE_MODEL }}'
+          claude_args: '--model ${{ steps.modelo.outputs.model }}'
