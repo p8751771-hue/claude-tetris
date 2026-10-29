@@ -13,3 +13,6 @@ Cada requerimiento pasa por la rama `qa` antes de llegar a `main`. Las pruebas c
 5. Si fallan, el comentario indica la causa y marca revisión manual. El issue sigue abierto y `main` no cambia.
 
 La evidencia se guarda en `tests/evidencia/issue-N/AAAA-MM-DD_HH-MM-SS/`. Cada ejecución crea su propia carpeta, y los errores quedan en `fallo/`.
+
+## Documentación detallada
+Las fases, los ciclos y el uso de Claude están en [docs/qa/index.md](qa/index.md).
