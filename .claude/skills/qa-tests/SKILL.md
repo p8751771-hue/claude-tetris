@@ -15,6 +15,9 @@ Al implementar un issue o requerimiento nuevo en este repositorio.
 - Las capturas de evidencia se guardan en `evidencia/qa/` con un nombre que diga qué prueba las generó.
 - No modificar `index.html`, `game.js` ni `style.css` para que una prueba pase. Si una prueba falla, reportar la causa.
 
+## Referencia
+Para explorar la página antes de escribir selectores, seguir el árbol de decisión de `anthropics/skills` → `skills/webapp-testing/SKILL.md`: esperar `networkidle`, tomar captura o inspeccionar el DOM, y luego escribir la prueba con los selectores encontrados. Ese material está en Python; aquí las pruebas se escriben en JavaScript con `@playwright/test`.
+
 ## Pasos
 1. Leer el requerimiento y escribir un escenario por cada criterio de aceptación.
 2. Crear `tests/issue-N.spec.js` con esos escenarios. Cada uno hace una captura en `evidencia/qa/`.
