@@ -79,8 +79,8 @@ jobs:
         run: npm test 2>&1 | tee resultado.txt
         continue-on-error: true
 
-      # Si una prueba grabó video (.webm) en la evidencia del issue, se convierte a GIF
-      # para que se vea animado en el comentario. El .webm no se guarda.
+      # Si una prueba grabó video (.webm) en la evidencia del issue, se genera un GIF
+      # para que se vea animado en el comentario. El .webm se conserva y se enlaza.
       - name: Convertir videos a GIF
         if: steps.issue.outputs.numero != ''
         env:
@@ -94,7 +94,6 @@ jobs:
             g="${v%.webm}.gif"
             ffmpeg -loglevel error -y -i "$v" \
               -vf "fps=6,scale=320:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64[p];[b][p]paletteuse" "$g"
-            rm "$v"
             echo "GIF: $g ($(du -h "$g" | cut -f1))"
           done
 
@@ -132,6 +131,12 @@ jobs:
           PLAYWRIGHT=$(npx playwright --version | awk '{print $2}')
           DISPOSITIVO=$(. /etc/os-release; echo "$PRETTY_NAME, viewport 1080×1920")
           IMAGENES=""
+          VIDEOS=""
+          for f in "$CARPETA"*.webm; do
+            [ -f "$f" ] || continue
+            VIDEOS="$VIDEOS
+          - 🎬 Video: [$(basename "$f")](https://github.com/$REPO/blob/$SHA/$f) ($(du -h "$f" | cut -f1))"
+          done
           for f in "$CARPETA"*.gif "$CARPETA"*.png "$CARPETA"fallo/*.png; do
             [ -f "$f" ] || continue
             IMAGENES="$IMAGENES
@@ -166,6 +171,7 @@ jobs:
             echo "- Modelo configurado: \`$MODELO\`"
             echo "- Navegador: \`$NAVEGADOR\` (Playwright $PLAYWRIGHT)"
             echo "- Dispositivo: $DISPOSITIVO"
+            [ -n "$VIDEOS" ] && echo "$VIDEOS"
             echo "$IMAGENES"
             echo ""
             echo "Aprobación del merge a \`main\`: manual."
