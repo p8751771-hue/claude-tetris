@@ -1,6 +1,6 @@
 ---
 name: qa-tests
-description: Crear o actualizar las pruebas Playwright de un requerimiento, con capturas como evidencia. En local se trabaja en la rama qa y se ejecutan las pruebas; en GitHub se escriben en la rama de Claude y las ejecuta el workflow QA al hacer merge a qa. Usar cuando se implemente un issue o requerimiento nuevo.
+description: Atender un issue o requerimiento con evidencia. Implementar el cambio, decidir si necesita pruebas Playwright automatizadas o una verificación LLM, y dejar la evidencia correspondiente. En GitHub se trabaja en la rama de Claude y el workflow QA ejecuta las pruebas al hacer merge a qa; en local se trabaja en qa. Usar al implementar cualquier issue.
 ---
 
 # Pruebas QA para un requerimiento
@@ -28,15 +28,48 @@ En ningún caso se cambia `main` directamente.
 ## Referencia
 Para explorar la página antes de escribir selectores, seguir el árbol de decisión de `anthropics/skills` → `skills/webapp-testing/SKILL.md`: esperar `networkidle`, tomar captura o inspeccionar el DOM, y luego escribir la prueba con los selectores encontrados. Ese material está en Python; aquí las pruebas se escriben en JavaScript con `@playwright/test`.
 
+## Decidir si automatizar
+Después de implementar, decide qué evidencia corresponde y escribe la decisión con su motivo en tu comentario: `Decisión: automatizar` o `Decisión: verificación LLM`.
+
+**Automatizar** (pruebas Playwright) cuando el cambio:
+- modifica lo que el usuario ve o hace en el navegador (`index.html`, `game.js`, `style.css`);
+- agrega o cambia un flujo de juego (teclas, botones, puntaje, estados como pausa o game over).
+
+**Verificación LLM** cuando el cambio no se puede observar en el navegador:
+- documentación, `README.md`, `docs/`, textos o comentarios;
+- configuración, workflows o skills.
+
+Si dudas, automatiza.
+
+### Formato de la verificación LLM
+Archivo `tests/evidencia/issue-N/verificacion-llm.md`:
+
+```markdown
+# Verificación LLM · issue #N
+- Fecha: AAAA-MM-DD HH:MM (UTC)
+- Modelo: <modelo de esta ejecución>
+- Rama: claude/issue-N-…
+- Motivo de no automatizar: <una frase>
+
+| Criterio | Cómo se verificó | Resultado |
+|---|---|---|
+| <criterio 1 del issue> | <archivo:línea o cambio revisado> | ✅ / ❌ |
+```
+
+Es una revisión rápida del cambio contra cada criterio, no una prueba ejecutada. Si algún criterio queda en ❌, dilo en tu comentario.
+
 ## Pasos
-1. Leer el requerimiento y escribir un escenario por cada criterio de aceptación.
-2. Crear `tests/issue-N.spec.js` con esos escenarios. Cada uno hace una captura con `capturar`, importada de `tests/helpers/evidencia.js` (`const { capturar } = require('./helpers/evidencia');`). No copiar la lógica de fecha ni de carpetas en la prueba: así todas las capturas de una ejecución quedan en la misma carpeta.
-3. En local, ejecutar `ISSUE=N npm test` y confirmar que todas las pruebas pasan. En GitHub, omitir este paso e indicar que la ejecución queda a cargo del workflow QA.
-4. Si alguna falla, corregir la prueba solo si el error está en la prueba. Si el error está en la implementación, reportarlo y detenerse.
-5. Hacer commit de `tests/` y cualquier ajuste, con el trailer de co-autor. En local, incluir también `tests/evidencia/issue-N/`.
-6. En local, solo si todas las pruebas pasan, abrir el PR de `qa` hacia `main` con `Closes #N`. En la descripción incluir una tabla: escenario, resultado, fecha y hora de la ejecución, y enlace a la captura. En GitHub, no abrir PR hacia `main`: indicar que la rama debe unirse a `qa` mediante una PR.
+1. Leer el requerimiento y sus criterios de aceptación.
+2. Implementar el cambio.
+3. Decidir si automatizar (sección anterior) y anotar la decisión en el comentario.
+4. **Si se automatiza:** crear `tests/issue-N.spec.js` con un escenario por criterio. Cada uno hace una captura con `capturar`, importada de `tests/helpers/evidencia.js` (`const { capturar } = require('./helpers/evidencia');`). No copiar la lógica de fecha ni de carpetas. Agregar los casos a `docs/qa/plan-de-pruebas.md` con el siguiente ID libre.
+5. **Si no se automatiza:** crear `tests/evidencia/issue-N/verificacion-llm.md` con el formato anterior.
+6. En local, ejecutar `ISSUE=N npm test` y confirmar que todo pasa. En GitHub, omitir este paso: el workflow QA ejecuta todas las pruebas al hacer merge a `qa`, también cuando solo hay verificación LLM.
+7. Hacer commit y push de todo en la misma rama, con el trailer de co-autor.
+8. En GitHub, no abrir PR hacia `main`: indicar que la rama se une a `qa` con una PR. En local, abrir la PR de `qa` a `main` con `Closes #N` solo si todo pasa.
 
 ## Qué no hacer
 - No hacer merge del PR. Lo revisa una persona.
 - No borrar pruebas existentes para que el resultado sea verde.
+- No modificar la aplicación para que una prueba pase. Si una prueba falla, reportar la causa.
 - No instalar dependencias nuevas sin registrarlas en `package.json`.

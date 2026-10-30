@@ -2,6 +2,11 @@
 
 Claude puede escribir las pruebas de un requerimiento siguiendo la skill del proyecto.
 
+**Decide el tipo de evidencia:** después de implementar, Claude decide si el cambio necesita pruebas automatizadas o una verificación LLM, y explica el motivo en su comentario. Ver [Fase 1](fase-1-implementacion.md).
+
+- **Pruebas automatizadas:** se ejecutan en el workflow QA y dejan capturas.
+- **Verificación LLM:** una revisión rápida de cada criterio contra el cambio. No ejecuta nada, así que no reemplaza una prueba; sirve para cambios que no se ven en el navegador.
+
 **Qué hace Claude:**
 1. Lee el requerimiento y lo convierte en escenarios.
 2. Escribe las pruebas en `tests/`.
