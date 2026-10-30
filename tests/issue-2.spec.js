@@ -1,20 +1,9 @@
 const { test, expect } = require('@playwright/test');
-const fs = require('fs');
-const path = require('path');
+const { capturar } = require('./helpers/evidencia');
 
 // Requerimiento: mostrar el título "TETRIS" en la página (issue #2).
-// Cada ejecución guarda su evidencia en tests/evidencia/issue-N/AAAA-MM-DD_HH-MM-SS/
+// La evidencia se guarda con capturar(), en tests/evidencia/issue-N/AAAA-MM-DD_HH-MM-SS/
 // Uso: ISSUE=2 npm test
-const ISSUE = process.env.ISSUE || 'sin-issue';
-const ahora = new Date();
-const pad = (n) => String(n).padStart(2, '0');
-const STAMP = `${ahora.getFullYear()}-${pad(ahora.getMonth() + 1)}-${pad(ahora.getDate())}_${pad(ahora.getHours())}-${pad(ahora.getMinutes())}-${pad(ahora.getSeconds())}`;
-const EVIDENCIA = path.join(__dirname, 'evidencia', `issue-${ISSUE}`, STAMP);
-
-async function capturar(page, nombre) {
-  fs.mkdirSync(EVIDENCIA, { recursive: true });
-  await page.screenshot({ path: path.join(EVIDENCIA, `${nombre}.png`), fullPage: true });
-}
 
 test('el título TETRIS es visible', async ({ page }) => {
   await page.goto('/');

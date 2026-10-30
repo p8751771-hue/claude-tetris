@@ -29,7 +29,7 @@ Para explorar la página antes de escribir selectores, seguir el árbol de decis
 
 ## Pasos
 1. Leer el requerimiento y escribir un escenario por cada criterio de aceptación.
-2. Crear `tests/issue-N.spec.js` con esos escenarios. Cada uno hace una captura con la función `capturar`.
+2. Crear `tests/issue-N.spec.js` con esos escenarios. Cada uno hace una captura con `capturar`, importada de `tests/helpers/evidencia.js` (`const { capturar } = require('./helpers/evidencia');`). No copiar la lógica de fecha ni de carpetas en la prueba: así todas las capturas de una ejecución quedan en la misma carpeta.
 3. En local, ejecutar `ISSUE=N npm test` y confirmar que todas las pruebas pasan. En GitHub, omitir este paso e indicar que la ejecución queda a cargo del workflow QA.
 4. Si alguna falla, corregir la prueba solo si el error está en la prueba. Si el error está en la implementación, reportarlo y detenerse.
 5. Hacer commit de `tests/` y cualquier ajuste, con el trailer de co-autor. En local, incluir también `tests/evidencia/issue-N/`.
