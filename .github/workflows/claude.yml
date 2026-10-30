@@ -56,6 +56,9 @@ jobs:
           # Muestra el avance como lista de tareas con casillas mientras Claude trabaja
           track_progress: true
 
+          # No cargar en el contexto los comentarios largos de evidencia QA y de modelo
+          exclude_comments_by_actor: 'github-actions[bot]'
+
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
@@ -65,7 +68,8 @@ jobs:
 
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
-          claude_args: '--model ${{ steps.modelo.outputs.model }}'
+          # --max-turns corta una tarea que se alargue demasiado
+          claude_args: '--model ${{ steps.modelo.outputs.model }} --max-turns 40'
 
       # Busca en el registro de la sesión los modelos que respondieron de verdad.
       # Compara con el modelo pedido para detectar si no coinciden.
