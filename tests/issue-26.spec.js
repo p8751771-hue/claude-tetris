@@ -21,7 +21,7 @@ test('juega sola desde el inicio hasta el nivel 4 sin GAME OVER', async ({ page 
   await page.goto('/');
   await expect(valor(page, 'level')).toHaveText('1');
   await expect(valor(page, 'lines')).toHaveText('0');
-  await capturar(page, 'inicio-partida.png');
+  await capturar(page, 'inicio-partida');
 
   let atascado = 0;
   let anterior = '';
@@ -49,7 +49,7 @@ test('juega sola desde el inicio hasta el nivel 4 sin GAME OVER', async ({ page 
   await expect(valor(page, 'level')).toHaveText('4');
   expect(Number(await valor(page, 'lines').textContent())).toBeGreaterThanOrEqual(LINEAS_NIVEL_4);
   await expect(page.locator('#overlay')).toBeHidden();
-  await capturar(page, 'nivel-4-sin-game-over.png');
+  await capturar(page, 'nivel-4-sin-game-over');
 
   // Cerrar la página antes de guardar el video: Playwright lo termina de escribir al cerrarla.
   await page.close();
