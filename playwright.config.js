@@ -1,6 +1,14 @@
 // @ts-check
 const { defineConfig } = require('@playwright/test');
 
+// Una sola fecha y hora por ejecución, para que todas las capturas queden en la misma carpeta.
+// Se calcula en el proceso principal; los workers heredan la variable.
+if (!process.env.EVIDENCIA_STAMP) {
+  const ahora = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  process.env.EVIDENCIA_STAMP = `${ahora.getFullYear()}-${pad(ahora.getMonth() + 1)}-${pad(ahora.getDate())}_${pad(ahora.getHours())}-${pad(ahora.getMinutes())}-${pad(ahora.getSeconds())}`;
+}
+
 module.exports = defineConfig({
   testDir: './tests',
   reporter: [['list']],

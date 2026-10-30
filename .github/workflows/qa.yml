@@ -106,7 +106,8 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           SHA=$(git rev-parse HEAD)
-          CARPETA=$(ls -d tests/evidencia/issue-$ISSUE/*/ | sort | tail -1)
+          CARPETA=$(ls -d tests/evidencia/issue-$ISSUE/*/ 2>/dev/null | sort | tail -1)
+          REGRESION=$(grep -oE "[0-9]+ (passed|failed|flaky|skipped)" resultado.txt | paste -sd ',' - | sed 's/,/, /g')
           MODELO=$(jq -r '.model // "sin modelo"' .claude/settings.json)
           NAVEGADOR=$(node -e "require('playwright-core').chromium.launch().then(async b=>{console.log('Chromium '+b.version());await b.close()})")
           PLAYWRIGHT=$(npx playwright --version | awk '{print $2}')
@@ -133,7 +134,11 @@ jobs:
             fi
             echo ""
             echo "- Rama: \`qa\` (commit \`${SHA:0:7}\`)"
-            echo "- Ejecución: \`$(basename "$CARPETA")\`"
+            echo "- Ejecución: \`$(basename "${CARPETA:-sin-capturas}")\`"
+            echo "- Regresión (todas las pruebas): ${REGRESION:-sin datos}"
+            if [ ! -f "tests/issue-$ISSUE.spec.js" ]; then
+              echo "- ⚠️ No existe \`tests/issue-$ISSUE.spec.js\`: no hay pruebas ni capturas propias de este issue."
+            fi
             echo "- Modelo configurado: \`$MODELO\`"
             echo "- Navegador: \`$NAVEGADOR\` (Playwright $PLAYWRIGHT)"
             echo "- Dispositivo: $DISPOSITIVO"

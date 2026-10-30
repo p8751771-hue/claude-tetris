@@ -17,7 +17,8 @@ Depende de dónde se ejecute la skill:
 En ningún caso se cambia `main` directamente.
 
 ## Reglas
-- Las pruebas viven en `tests/`, una por requerimiento: `tests/issue-N.spec.js`.
+- Las pruebas viven en `tests/`, un archivo por issue: `tests/issue-N.spec.js`. El nombre importa: `capturar` solo guarda imágenes del archivo del issue en curso.
+- Cada ejecución corre todas las pruebas, como regresión. Las de otros issues deben seguir pasando, pero no generan capturas.
 - Cada prueba debe partir de un estado conocido. La página sigue la preferencia del sistema, así que `playwright.config.js` fija `colorScheme: 'dark'`; no quitarlo.
 - La evidencia siempre queda en `tests/evidencia/issue-N/AAAA-MM-DD_HH-MM-SS/`, donde N es el número del issue y la fecha y hora es la de la ejecución. Cada ejecución crea su propia carpeta; no sobrescribir ejecuciones anteriores.
 - Ejecutar con `ISSUE=N npm test`. Sin `ISSUE`, la evidencia cae en `sin-issue/` y no debe usarse en un PR.
@@ -29,7 +30,7 @@ Para explorar la página antes de escribir selectores, seguir el árbol de decis
 
 ## Pasos
 1. Leer el requerimiento y escribir un escenario por cada criterio de aceptación.
-2. Crear `tests/issue-N.spec.js` con esos escenarios. Cada uno hace una captura con la función `capturar`.
+2. Crear `tests/issue-N.spec.js` con esos escenarios. Cada uno hace una captura con `capturar`, importada de `tests/helpers/evidencia.js` (`const { capturar } = require('./helpers/evidencia');`). No copiar la lógica de fecha ni de carpetas en la prueba: así todas las capturas de una ejecución quedan en la misma carpeta.
 3. En local, ejecutar `ISSUE=N npm test` y confirmar que todas las pruebas pasan. En GitHub, omitir este paso e indicar que la ejecución queda a cargo del workflow QA.
 4. Si alguna falla, corregir la prueba solo si el error está en la prueba. Si el error está en la implementación, reportarlo y detenerse.
 5. Hacer commit de `tests/` y cualquier ajuste, con el trailer de co-autor. En local, incluir también `tests/evidencia/issue-N/`.
