@@ -37,7 +37,7 @@ Cada requerimiento agrega sus propios casos con un ID nuevo en `tests/issue-N.sp
 
 ## 6. Ejecución
 - Local: `ISSUE=N npm test`.
-- En GitHub: Actions → QA → Run workflow → `issue = N`.
+- En GitHub: automático al hacer merge de una PR hacia `qa`, o manual desde Actions → QA → Run workflow → `issue = N`.
 
 ## 7. Riesgos conocidos
 - **Preferencia de tema del sistema:** la página sigue el tema del sistema. Por eso la configuración fija el tema oscuro.
