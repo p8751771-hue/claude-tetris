@@ -33,6 +33,7 @@ Verificar que cada cambio de Tetris funciona en el navegador antes de llegar a `
 | TC-08 | Contador en 0 al cargar | `#pieces` vale `0` al cargar la página (issue #18) | `contador-inicia-en-cero.png` |
 | TC-09 | Suma al fijar una pieza | Cada pieza fijada en el tablero (Espacio) suma 1: `#pieces` pasa de 0 a 1 y de 1 a 2 (issue #18) | `contador-suma-al-fijar.png` |
 | TC-10 | Reinicio a 0 | Tras fijar 3 piezas, pausar y pulsar Reiniciar devuelve `#pieces` a `0` (issue #18) | `contador-reinicia-en-cero.png` |
+| TC-11 | Partida automática hasta el nivel 4 | Un bot con el teclado juega desde el inicio hasta 30 líneas (`#level` = 4) sin GAME OVER; el video de la partida queda como evidencia (issue #26) | `inicio-partida.png`, `nivel-4-sin-game-over.png`, `partida-nivel-4.webm` (video) |
 
 Cada requerimiento agrega sus propios casos con un ID nuevo en `tests/issue-N.spec.js`.
 

@@ -15,4 +15,12 @@ async function capturar(page, nombre) {
   await page.screenshot({ path: path.join(EVIDENCIA, `${nombre}.png`), fullPage: true });
 }
 
-module.exports = { capturar };
+// Video de la página (requiere video: 'on' en el archivo del issue).
+// Playwright lo guarda al cerrar la página: cerrarla antes de llamar a esta función.
+async function guardarVideo(page, nombre) {
+  if (path.basename(test.info().file) !== `issue-${ISSUE}.spec.js`) return;
+  fs.mkdirSync(EVIDENCIA, { recursive: true });
+  await page.video().saveAs(path.join(EVIDENCIA, nombre));
+}
+
+module.exports = { capturar, guardarVideo };
