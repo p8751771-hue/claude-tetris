@@ -29,6 +29,10 @@ Verificar que cada cambio de Tetris funciona en el navegador antes de llegar a `
 | TC-04 | Título visible | `h1.title` con texto `TETRIS` visible (issue #2) | `titulo-visible.png` |
 | TC-05 | Título fuera de `.wrapper` | `h1.title` no es descendiente de `.wrapper`, para que el overlay de GAME OVER no lo cubra (issue #2) | `titulo-fuera-wrapper.png` |
 | TC-06 | Tablero debajo del título | `#board` visible y su borde superior en o debajo del borde inferior del título (issue #2) | `tablero-debajo-titulo.png` |
+| TC-07 | Etiqueta PIEZAS en el panel | `PIEZAS` aparece en el panel con el mismo estilo que `SCORE`, `LINES` y `LEVEL` (issue #18) | `panel-etiqueta-piezas.png` |
+| TC-08 | Contador en 0 al cargar | `#pieces` vale `0` al cargar la página (issue #18) | `contador-inicia-en-cero.png` |
+| TC-09 | Suma al fijar una pieza | Cada pieza fijada en el tablero (Espacio) suma 1: `#pieces` pasa de 0 a 1 y de 1 a 2 (issue #18) | `contador-suma-al-fijar.png` |
+| TC-10 | Reinicio a 0 | Tras fijar 3 piezas, pausar y pulsar Reiniciar devuelve `#pieces` a `0` (issue #18) | `contador-reinicia-en-cero.png` |
 
 Cada requerimiento agrega sus propios casos con un ID nuevo en `tests/issue-N.spec.js`.
 
