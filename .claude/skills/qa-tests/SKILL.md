@@ -17,7 +17,8 @@ Depende de dónde se ejecute la skill:
 En ningún caso se cambia `main` directamente.
 
 ## Reglas
-- Las pruebas viven en `tests/`, una por requerimiento: `tests/issue-N.spec.js`.
+- Las pruebas viven en `tests/`, un archivo por issue: `tests/issue-N.spec.js`. El nombre importa: `capturar` solo guarda imágenes del archivo del issue en curso.
+- Cada ejecución corre todas las pruebas, como regresión. Las de otros issues deben seguir pasando, pero no generan capturas.
 - Cada prueba debe partir de un estado conocido. La página sigue la preferencia del sistema, así que `playwright.config.js` fija `colorScheme: 'dark'`; no quitarlo.
 - La evidencia siempre queda en `tests/evidencia/issue-N/AAAA-MM-DD_HH-MM-SS/`, donde N es el número del issue y la fecha y hora es la de la ejecución. Cada ejecución crea su propia carpeta; no sobrescribir ejecuciones anteriores.
 - Ejecutar con `ISSUE=N npm test`. Sin `ISSUE`, la evidencia cae en `sin-issue/` y no debe usarse en un PR.
