@@ -5,6 +5,7 @@
 **Dónde queda:** `tests/evidencia/issue-N/AAAA-MM-DD_HH-MM-SS/`
 
 **Reglas:**
+- Solo se guardan capturas de las pruebas del issue (`tests/issue-N.spec.js`). Las demás pruebas corren como regresión y su resultado aparece como resumen en el comentario.
 - Cada ejecución crea su propia carpeta.
 - Nunca se sobrescribe una ejecución anterior.
 - Se hace commit en `qa` con el mensaje `Evidencia QA del issue #N`.
