@@ -136,8 +136,13 @@ jobs:
             echo "- Rama: \`qa\` (commit \`${SHA:0:7}\`)"
             echo "- Ejecución: \`$(basename "${CARPETA:-sin-capturas}")\`"
             echo "- Regresión (todas las pruebas): ${REGRESION:-sin datos}"
-            if [ ! -f "tests/issue-$ISSUE.spec.js" ]; then
-              echo "- ⚠️ No existe \`tests/issue-$ISSUE.spec.js\`: no hay pruebas ni capturas propias de este issue."
+            VERIF="tests/evidencia/issue-$ISSUE/verificacion-llm.md"
+            if [ -f "tests/issue-$ISSUE.spec.js" ]; then
+              echo "- Tipo de evidencia: pruebas automatizadas (\`tests/issue-$ISSUE.spec.js\`)"
+            elif [ -f "$VERIF" ]; then
+              echo "- Tipo de evidencia: verificación LLM, sin pruebas automatizadas ([ver verificación](https://github.com/$REPO/blob/$SHA/$VERIF))"
+            else
+              echo "- ⚠️ No hay \`tests/issue-$ISSUE.spec.js\` ni \`$VERIF\`: este issue no tiene evidencia propia. Revisión manual requerida."
             fi
             echo "- Modelo configurado: \`$MODELO\`"
             echo "- Navegador: \`$NAVEGADOR\` (Playwright $PLAYWRIGHT)"
