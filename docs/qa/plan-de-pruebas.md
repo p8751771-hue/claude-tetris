@@ -26,6 +26,9 @@ Verificar que cada cambio de Tetris funciona en el navegador antes de llegar a `
 | TC-01 | Carga del tablero y del botón de tema | `#board` y `#theme-toggle` visibles | `carga-tablero.png` |
 | TC-02 | Modo claro | Al pulsar el botón, `data-theme` vale `light` | `modo-claro.png` |
 | TC-03 | Vuelta al modo oscuro | Dos pulsaciones devuelven `data-theme` a `dark` | `modo-oscuro.png` |
+| TC-04 | Título visible | `h1.title` con texto `TETRIS` visible (issue #2) | `titulo-visible.png` |
+| TC-05 | Título fuera de `.wrapper` | `h1.title` no es descendiente de `.wrapper`, para que el overlay de GAME OVER no lo cubra (issue #2) | `titulo-fuera-wrapper.png` |
+| TC-06 | Tablero debajo del título | `#board` visible y su borde superior en o debajo del borde inferior del título (issue #2) | `tablero-debajo-titulo.png` |
 
 Cada requerimiento agrega sus propios casos con un ID nuevo en `tests/issue-N.spec.js`.
 
@@ -41,7 +44,7 @@ Cada requerimiento agrega sus propios casos con un ID nuevo en `tests/issue-N.sp
 
 ## 7. Riesgos conocidos
 - **Preferencia de tema del sistema:** la página sigue el tema del sistema. Por eso la configuración fija el tema oscuro.
-- **Título del juego:** el issue #2 no está fusionado, así que no hay casos para él.
+- **Título del juego (issue #2):** TC-04 a TC-06 fallarán hasta que el cambio `<h1 class="title">` llegue a la rama de pruebas. Este commit no lo incluye.
 - **Captura de fallos:** si una prueba falla, la captura se guarda en `fallo/`, no en la carpeta principal.
 
 ## 8. Responsables
