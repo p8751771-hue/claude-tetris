@@ -79,6 +79,25 @@ jobs:
         run: npm test 2>&1 | tee resultado.txt
         continue-on-error: true
 
+      # Si una prueba grabó video (.webm) en la evidencia del issue, se convierte a GIF
+      # para que se vea animado en el comentario. El .webm no se guarda.
+      - name: Convertir videos a GIF
+        if: steps.issue.outputs.numero != ''
+        env:
+          ISSUE: ${{ steps.issue.outputs.numero }}
+        run: |
+          CARPETA=$(ls -d tests/evidencia/issue-$ISSUE/*/ 2>/dev/null | sort | tail -1)
+          [ -n "$CARPETA" ] || exit 0
+          ls "$CARPETA"*.webm >/dev/null 2>&1 || { echo "Sin videos"; exit 0; }
+          command -v ffmpeg >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; }
+          for v in "$CARPETA"*.webm; do
+            g="${v%.webm}.gif"
+            ffmpeg -loglevel error -y -i "$v" \
+              -vf "fps=6,scale=320:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64[p];[b][p]paletteuse" "$g"
+            rm "$v"
+            echo "GIF: $g ($(du -h "$g" | cut -f1))"
+          done
+
       - name: Guardar evidencia en qa
         if: steps.issue.outputs.numero != ''
         env:
@@ -113,10 +132,10 @@ jobs:
           PLAYWRIGHT=$(npx playwright --version | awk '{print $2}')
           DISPOSITIVO=$(. /etc/os-release; echo "$PRETTY_NAME, viewport 1080×1920")
           IMAGENES=""
-          for f in "$CARPETA"*.png "$CARPETA"fallo/*.png; do
+          for f in "$CARPETA"*.gif "$CARPETA"*.png "$CARPETA"fallo/*.png; do
             [ -f "$f" ] || continue
             IMAGENES="$IMAGENES
-          ![$(basename "$f" .png)](https://raw.githubusercontent.com/$REPO/$SHA/$f)"
+          ![$(basename "${f%.*}")](https://raw.githubusercontent.com/$REPO/$SHA/$f)"
           done
           {
             echo "### 🧪 Evidencia QA"
