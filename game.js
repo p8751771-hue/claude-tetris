@@ -35,12 +35,13 @@ const nextCtx = nextCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const linesEl = document.getElementById('lines');
 const levelEl = document.getElementById('level');
+const piecesEl = document.getElementById('pieces');
 const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
 
-let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let board, current, next, score, lines, level, pieces, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -137,7 +138,9 @@ function softDrop() {
 
 function lockPiece() {
   merge();
+  pieces++;
   clearLines();
+  updateHUD();
   spawn();
 }
 
@@ -154,6 +157,7 @@ function updateHUD() {
   scoreEl.textContent = score.toLocaleString();
   linesEl.textContent = lines;
   levelEl.textContent = level;
+  piecesEl.textContent = pieces;
 }
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
@@ -261,6 +265,7 @@ function init() {
   score = 0;
   lines = 0;
   level = 1;
+  pieces = 0;
   paused = false;
   gameOver = false;
   dropInterval = 1000;
