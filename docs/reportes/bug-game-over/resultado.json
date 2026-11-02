@@ -1,0 +1,12 @@
+{
+  "porGravedad": true,
+  "alGameOver": {
+    "animId": 249,
+    "pieces": 11
+  },
+  "final": {
+    "animId": 650,
+    "pieces": 18,
+    "gameOver": true
+  }
+}
